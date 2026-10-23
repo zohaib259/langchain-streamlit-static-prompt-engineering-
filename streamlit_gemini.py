@@ -1,7 +1,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 import streamlit as st
-from langchain_core.prompts import PromptTemplate,load_prompt
+from langchain_core.prompts import PromptTemplate, load_prompt
 
 load_dotenv()
 
@@ -41,15 +41,14 @@ model = ChatGoogleGenerativeAI(model="gemini-3.8-flash")
 template = load_prompt("template.json")
 
 if st.button("Submit"):
-    # Generate prompt using the corrected key "length_input"
-    prompt = template.invoke(
-        {
-            "paper_input": paper_input,
-            "style_input": style_input,
-            "length_input": lenght_input,
-        }
-    )
-    
+
+    chain = template | model
     with st.spinner("Analyzing..."):
-        result = model.invoke(prompt)
+        result = chain.invoke(
+            {
+                "paper_input": paper_input,
+                "style_input": style_input,
+                "length_input": lenght_input,
+            }
+        )
         st.write(result.text)
